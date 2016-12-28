@@ -9,7 +9,7 @@ Windows標準のSnipping Tool風にスクリーンショットを取得し、メ
   >   
   > CoreTweet - A .NET Twitter Library supporting Twitter API 1.1  
   > Copyright (c) 2013-2016 CoreTweet Development Team  
-  > https://github.com/CoreTweet/CoreTweet/blob/master/LICENSE　
+  > https://github.com/CoreTweet/CoreTweet/blob/master/LICENSE　
 
 - Newtonsoft.Json
 
