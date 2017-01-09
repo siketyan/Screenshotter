@@ -11,8 +11,12 @@ namespace Screenshotter
         {
             var globalHook = new KeyboardHook();
             globalHook.KeyboardEvent += new KeyboardHook.KeyboardEventHandler(OnKeyDown);
+            globalHook.InstallHook();
 
             Console.ReadLine();
+
+            globalHook.UninstallHook();
+            globalHook.Dispose();
         }
 
         private static void OnKeyDown(KeyboardEvents e, Keys k)

@@ -11,7 +11,7 @@
               Background="Transparent" Cursor="Cross" ForceCursor="True"
               VerticalAlignment="Center" HorizontalAlignment="Center">
             <Image x:Name="Screenshot" Stretch="None" />
-            <Canvas>
+            <Canvas Background="#55FFFFFF">
                 <Rectangle x:Name="SelectedArea" Visibility="Collapsed"
                        Stroke="Red" StrokeThickness="1" />
             </Canvas>
