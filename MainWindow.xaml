@@ -4,16 +4,17 @@
         WindowStyle="None" Topmost="True"
         Margin="0" Padding="0" AllowsTransparency="True"
         Background="Transparent" ShowInTaskbar="False" Title="MainWindow"
-        Loaded="Init">
-    <Canvas Name="LayoutRoot" Background="Transparent" Margin="0">
-        <Path Stroke="Black" StrokeThickness="1" Fill="#BBFFFFFF"
-              Margin="0"
-              MouseLeftButtonDown="OnDragStart"
-              MouseLeftButtonUp="OnDragFinish"
-              MouseMove="OnDraging">
-            <Path.Data>
-                <CombinedGeometry x:Name="ScreenArea" GeometryCombineMode="Xor" />
-            </Path.Data>
-        </Path>
-    </Canvas>
+        Loaded="Init" WindowState="Maximized">
+    <Grid>
+        <Grid x:Name="LayoutRoot" MouseDown="OnDragStart"
+              MouseUp="OnDragFinish" MouseMove="OnDraging"
+              Background="Transparent" Cursor="Cross" ForceCursor="True"
+              VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Image x:Name="Screenshot" Stretch="None" />
+            <Canvas>
+                <Rectangle x:Name="SelectedArea" Visibility="Collapsed"
+                       Stroke="Red" StrokeThickness="1" />
+            </Canvas>
+        </Grid>
+    </Grid>
 </Window>
