@@ -1,8 +1,11 @@
-﻿using Kennedy.ManagedHooks;
+﻿using CoreTweet;
+using Kennedy.ManagedHooks;
+using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -25,6 +28,8 @@ namespace Screenshotter
         private KeyboardHook globalHook;
         private Drawing.Bitmap screenshot;
 
+        public static Tokens token;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -39,6 +44,38 @@ namespace Screenshotter
 
         private void Init(object sender, RoutedEventArgs e)
         {
+            if (File.Exists(@".\config.json"))
+            {
+                using (
+                    var sr = new StreamReader(
+                                  @".\config.json", Encoding.GetEncoding("Shift_JIS")
+                             )
+                ){
+                    var json = sr.ReadToEnd();
+                    var config = JsonConvert.DeserializeObject<Config>(json);
+
+                    try
+                    {
+                        token = Tokens.Create(
+                            config.ConsumerKey,
+                            config.ConsumerSecret,
+                            config.AccessToken,
+                            config.AccessSecret
+                        );
+                    }
+                    catch
+                    {
+                        MessageBox.Show("Twitterにログインできませんでした。Screenshotterを終了します。");
+                        Close();
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("設定ファイルが見つかりませんでした。Screenshotterを終了します。");
+                Close();
+            }
+
             globalHook = new KeyboardHook();
             globalHook.KeyboardEvent += new KeyboardHook.KeyboardEventHandler(OnKeyDown);
             globalHook.InstallHook();
@@ -108,17 +145,14 @@ namespace Screenshotter
 
             var rect = new Drawing.Rectangle(left, top, width, height);
             var trimmed = screenshot.Clone(rect, screenshot.PixelFormat);
+            var path = location + @"\~$Capture-"
+                           + DateTime.Now.ToString("yyyyMMddHHmmssfff")
+                           + ".temp.png";
 
-            if (!Directory.Exists(location + @"\temp"))
-                Directory.CreateDirectory(location + @"\temp");
-
-            trimmed.Save(
-                location + @"\~$Capture-"
-                    + DateTime.Now.ToString("yyyyMMddHHmmssfff")
-                    + ".temp.png",
-                Drawing.Imaging.ImageFormat.Png
-            );
+            trimmed.Save(path, Drawing.Imaging.ImageFormat.Png);
             trimmed.Dispose();
+
+            new TweetWindow(path).ShowDialog();
 
             isTrimMode = false;
         }
