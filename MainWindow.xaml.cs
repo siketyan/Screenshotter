@@ -113,7 +113,7 @@ namespace Screenshotter
                 Directory.CreateDirectory(location + @"\temp");
 
             trimmed.Save(
-                location + @"~$Capture-"
+                location + @"\~$Capture-"
                     + DateTime.Now.ToString("yyyyMMddHHmmssfff")
                     + ".temp.png",
                 Drawing.Imaging.ImageFormat.Png
