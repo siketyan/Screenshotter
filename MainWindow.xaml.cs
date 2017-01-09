@@ -7,7 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
-
+using System.Windows.Media.Animation;
 using Drawing = System.Drawing;
 using Forms = System.Windows.Forms;
 
@@ -155,12 +155,14 @@ namespace Screenshotter
         {
             Opacity = 1f;
             IsHitTestVisible = true;
+            TrimNotify.Visibility = Visibility.Visible;
         }
 
         private void Disable()
         {
             Opacity = 0f;
             IsHitTestVisible = false;
+            TrimNotify.Visibility = Visibility.Collapsed;
         }
 
 
