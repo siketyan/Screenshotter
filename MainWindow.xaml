@@ -1,17 +1,17 @@
 ﻿<Window x:Class="Screenshotter.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        WindowStyle="None" Topmost="True"
+        WindowStyle="None" Topmost="True" Opacity="1"
         Margin="0" Padding="0" AllowsTransparency="True"
         Background="Transparent" ShowInTaskbar="False" Title="MainWindow"
-        Loaded="Init" WindowState="Maximized">
+        Loaded="Init" WindowState="Maximized" IsHitTestVisible="False">
     <Grid>
         <Grid x:Name="LayoutRoot" MouseDown="OnDragStart"
               MouseUp="OnDragFinish" MouseMove="OnDraging"
               Background="Transparent" Cursor="Cross" ForceCursor="True"
               VerticalAlignment="Center" HorizontalAlignment="Center">
             <Image x:Name="Screenshot" Stretch="None" />
-            <Canvas Background="#55FFFFFF">
+            <Canvas>
                 <Rectangle x:Name="SelectedArea" Visibility="Collapsed"
                        Stroke="Red" StrokeThickness="1" />
             </Canvas>

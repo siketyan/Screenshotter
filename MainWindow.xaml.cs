@@ -1,9 +1,14 @@
-﻿using System;
+﻿using Kennedy.ManagedHooks;
+using System;
+using System.IO;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
+
+using Drawing = System.Drawing;
 using Forms = System.Windows.Forms;
 
 namespace Screenshotter
@@ -14,28 +19,55 @@ namespace Screenshotter
     public partial class MainWindow : Window
     {
         private bool isMouseDown;
-        private Point startedPosition;
+        private bool isTrimMode;
+        private string location;
+        private Point startPosition;
+        private KeyboardHook globalHook;
+        private Drawing.Bitmap screenshot;
 
         public MainWindow()
         {
             InitializeComponent();
+            location = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        }
+
+        ~MainWindow()
+        {
+            globalHook.UninstallHook();
+            globalHook.Dispose();
         }
 
         private void Init(object sender, RoutedEventArgs e)
         {
+            globalHook = new KeyboardHook();
+            globalHook.KeyboardEvent += new KeyboardHook.KeyboardEventHandler(OnKeyDown);
+            globalHook.InstallHook();
+        }
+
+        private void OnKeyDown(KeyboardEvents e, Forms.Keys k)
+        {
+            if (isTrimMode ||
+                e != KeyboardEvents.KeyDown ||
+                k != Forms.Keys.PrintScreen) return;
+
             LayoutRoot.Width = Forms.Screen.PrimaryScreen.Bounds.Width;
             LayoutRoot.Height = Forms.Screen.PrimaryScreen.Bounds.Height;
-            Screenshot.Source = ScreenshotUtil.GetScreenshot().ToBitmapSource();
+
+            screenshot = ScreenshotUtil.GetScreenshot();
+            Screenshot.Source = screenshot.ToBitmapSource();
+
+            isTrimMode = true;
+            Enable();
         }
 
         private void OnDragStart(object sender, MouseButtonEventArgs e)
         {
             isMouseDown = true;
-            startedPosition = e.GetPosition(LayoutRoot);
+            startPosition = e.GetPosition(LayoutRoot);
             LayoutRoot.CaptureMouse();
                     
-            Canvas.SetLeft(SelectedArea, startedPosition.X);
-            Canvas.SetTop(SelectedArea, startedPosition.Y);
+            Canvas.SetLeft(SelectedArea, startPosition.X);
+            Canvas.SetTop(SelectedArea, startPosition.Y);
 
             SelectedArea.Width = 0;
             SelectedArea.Height = 0;
@@ -47,8 +79,48 @@ namespace Screenshotter
             isMouseDown = false;
             SelectedArea.Visibility = Visibility.Collapsed;
             LayoutRoot.ReleaseMouseCapture();
+            Disable();
 
             Point finishPosition = e.GetPosition(LayoutRoot);
+            int left, top, width, height;
+
+            if (startPosition.X < finishPosition.X)
+            {
+                left = (int)startPosition.X;
+                width = (int)(finishPosition.X - startPosition.X);
+            }
+            else
+            {
+                left = (int)finishPosition.X;
+                width = (int)(startPosition.X - finishPosition.X);
+            }
+
+            if (startPosition.Y < finishPosition.Y)
+            {
+                top = (int)startPosition.Y;
+                height = (int)(finishPosition.Y - startPosition.Y);
+            }
+            else
+            {
+                top = (int)finishPosition.Y;
+                height = (int)(startPosition.Y - finishPosition.Y);
+            }
+
+            var rect = new Drawing.Rectangle(left, top, width, height);
+            var trimmed = screenshot.Clone(rect, screenshot.PixelFormat);
+
+            if (!Directory.Exists(location + @"\temp"))
+                Directory.CreateDirectory(location + @"\temp");
+
+            trimmed.Save(
+                location + @"~$Capture-"
+                    + DateTime.Now.ToString("yyyyMMddHHmmssfff")
+                    + ".temp.png",
+                Drawing.Imaging.ImageFormat.Png
+            );
+            trimmed.Dispose();
+
+            isTrimMode = false;
         }
 
         private void OnDraging(object sender, MouseEventArgs e)
@@ -56,27 +128,39 @@ namespace Screenshotter
             if (!isMouseDown) return;
             Point nowPosition = e.GetPosition(LayoutRoot);
 
-            if (startedPosition.X < nowPosition.X)
+            if (startPosition.X < nowPosition.X)
             {
-                Canvas.SetLeft(SelectedArea, startedPosition.X);
-                SelectedArea.Width = nowPosition.X - startedPosition.X;
+                Canvas.SetLeft(SelectedArea, startPosition.X);
+                SelectedArea.Width = nowPosition.X - startPosition.X;
             }
             else
             {
                 Canvas.SetLeft(SelectedArea, nowPosition.X);
-                SelectedArea.Width = startedPosition.X - nowPosition.X;
+                SelectedArea.Width = startPosition.X - nowPosition.X;
             }
 
-            if (startedPosition.Y < nowPosition.Y)
+            if (startPosition.Y < nowPosition.Y)
             {
-                Canvas.SetTop(SelectedArea, startedPosition.Y);
-                SelectedArea.Height = nowPosition.Y - startedPosition.Y;
+                Canvas.SetTop(SelectedArea, startPosition.Y);
+                SelectedArea.Height = nowPosition.Y - startPosition.Y;
             }
             else
             {
                 Canvas.SetTop(SelectedArea, nowPosition.Y);
-                SelectedArea.Height = startedPosition.Y - nowPosition.Y;
+                SelectedArea.Height = startPosition.Y - nowPosition.Y;
             }
+        }
+
+        private void Enable()
+        {
+            Opacity = 1f;
+            IsHitTestVisible = true;
+        }
+
+        private void Disable()
+        {
+            Opacity = 0f;
+            IsHitTestVisible = false;
         }
 
 
