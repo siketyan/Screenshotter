@@ -17,15 +17,8 @@ Windows標準のSnipping Tool風にスクリーンショットを取得し、メ
   > Copyright (c) 2007 James Newton-King  
   > https://github.com/JamesNK/Newtonsoft.Json/blob/master/LICENSE.md
 
-- MouseKeyHook
-  > The 3-Clause BSD License
+- Global System Hooks
+  > The Code Project Open License (CPOL)
   >   
-  > Copyright (c) 2004-2015, George Mamaladze  
-  > All rights reserved.
-  > https://github.com/gmamaladze/globalmousekeyhook/blob/vNext/LICENSE.txt
-
-- MainWindow クラスの一部
-  > The New BSD License (The 2-Clause BSD License)
-  >   
-  > © astel-labs.net.  
-  > https://opensource.org/licenses/BSD-2-Clause
+  > © 2004-2005 Michael Kennedy  
+  > https://www.codeproject.com/info/cpol10.aspx
