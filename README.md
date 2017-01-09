@@ -3,6 +3,10 @@ Windows標準のSnipping Tool風にスクリーンショットを取得し、メ
 このソフトウェアは、[come25136/MyScreenshotAssistant2](https://github.com/come25136/MyScreenshotAssistant2)をインスパイアしています。
 　  
 　  
+## Features
+- スクリーンショット取得からツイートまですべてこれ一つで行えます。
+- 画面全体のスクリーンショットを取得してからトリミングするので、タイミングを逃しません。
+
 ## Licenses
 - CoreTweet
   > The MIT License (MIT)  
@@ -22,3 +26,9 @@ Windows標準のSnipping Tool風にスクリーンショットを取得し、メ
   >   
   > © 2004-2005 Michael Kennedy  
   > https://www.codeproject.com/info/cpol10.aspx
+
+- WPF Loaders
+  > The MIT License (MIT)  
+  >   
+  > Copyright (c) 2015 Mickael GOETZ  
+  > https://github.com/MrMitch/WPF-Loaders/blob/master/MrMitch.Loaders/LICENSE.txt
