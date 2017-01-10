@@ -27,6 +27,7 @@ namespace Screenshotter
         private Point startPosition;
         private KeyboardHook globalHook;
         private Drawing.Bitmap screenshot;
+        private Forms.NotifyIcon notifyIcon;
 
         public static Tokens token;
 
@@ -40,6 +41,7 @@ namespace Screenshotter
         {
             globalHook.UninstallHook();
             globalHook.Dispose();
+            notifyIcon.Dispose();
         }
 
         private void Init(object sender, RoutedEventArgs e)
@@ -74,6 +76,27 @@ namespace Screenshotter
             {
                 MessageBox.Show("設定ファイルが見つかりませんでした。Screenshotterを終了します。");
                 Close();
+            }
+
+            var iconStream = Application.GetResourceStream(
+                new Uri("pack://application:,,,/Screenshotter;component/Resources/notifyicon.ico")
+            );
+
+            if (iconStream != null)
+            {
+                notifyIcon = new Forms.NotifyIcon()
+                {
+                    Text = @"Screenshotter",
+                    Icon = new Drawing.Icon(iconStream.Stream),
+                    Visible = true,
+                    BalloonTipTitle = @"Screenshotter",
+                    BalloonTipIcon = Forms.ToolTipIcon.Info,
+                    BalloonTipText = @"PrintScreenキーを押すとスクリーンショットを取得できます。",
+                    ContextMenu = new Forms.ContextMenu()
+                };
+
+                notifyIcon.ContextMenu.MenuItems.Add("終了", new EventHandler((s, a) => Close()));
+                notifyIcon.ShowBalloonTip(2000);
             }
 
             globalHook = new KeyboardHook();

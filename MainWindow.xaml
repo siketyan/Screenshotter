@@ -1,7 +1,7 @@
 ﻿<Window x:Class="Screenshotter.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        WindowStyle="None" Topmost="True" Opacity="1"
+        WindowStyle="None" Topmost="True" Opacity="1" Icon="Resources/icon.ico"
         Margin="0" Padding="0" AllowsTransparency="True"
         Background="Transparent" ShowInTaskbar="False" Title="MainWindow"
         Loaded="Init" WindowState="Maximized" IsHitTestVisible="False"

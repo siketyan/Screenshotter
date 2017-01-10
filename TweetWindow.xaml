@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:loaders="clr-namespace:Loaders;assembly=MrMitch.Loaders"
         mc:Ignorable="d" Topmost="True" WindowStartupLocation="CenterScreen"
-        BorderBrush="#39F" BorderThickness="1" FontFamily="Meiryo UI"
-        Title="スクリーンショットのツイート" Height="210" Width="498"
+        BorderBrush="#39F" BorderThickness="1" FontFamily="Meiryo UI" ShowInTaskbar="False"
+        Title="スクリーンショットのツイート" Height="210" Width="498" Icon="Resources/icon.ico"
         SizeToContent="Height" SnapsToDevicePixels="True" UseLayoutRounding="True">
     <WindowChrome.WindowChrome>
         <WindowChrome CornerRadius="3" GlassFrameThickness="1" ResizeBorderThickness="8"
