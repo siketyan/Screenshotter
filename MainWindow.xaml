@@ -1,12 +1,36 @@
 ﻿<Window x:Class="Screenshotter.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Screenshotter"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        WindowStyle="None" Topmost="True" Opacity="1" Icon="Resources/icon.ico"
+        Margin="0" Padding="0" AllowsTransparency="True"
+        Background="Transparent" ShowInTaskbar="False" Title="MainWindow"
+        Loaded="Init" WindowState="Maximized" IsHitTestVisible="False"
+        FontFamily="Meiryo UI">
     <Grid>
-        
+        <Grid x:Name="LayoutRoot" MouseDown="OnDragStart"
+              MouseUp="OnDragFinish" MouseMove="OnDraging"
+              Background="Transparent" Cursor="Cross" ForceCursor="True"
+              VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Image x:Name="Screenshot" Stretch="None" />
+            <Canvas>
+                <Rectangle x:Name="SelectedArea" Visibility="Collapsed"
+                       Stroke="Red" StrokeThickness="1" />
+            </Canvas>
+        </Grid>
+
+        <Border x:Name="TrimNotify" BorderBrush="#39F" BorderThickness="1"
+                Background="#99FFFFFF" Width="320" Height="103"
+                Visibility="Collapsed">
+            <StackPanel Margin="10">
+                <Label FontSize="18" HorizontalContentAlignment="Center">スクリーンショットのトリミング</Label>
+                <Label FontSize="13" HorizontalContentAlignment="Center">
+                    <TextBlock>
+                        ドラッグして、スクリーンショットをトリミングできます。
+                        <LineBreak />
+                        このまま続行する場合は、Enterキーを押してください。
+                    </TextBlock>
+                </Label>
+            </StackPanel>
+        </Border>
     </Grid>
 </Window>
