@@ -35,6 +35,8 @@ namespace Screenshotter
                       Message.Text, new FileStream(path, FileMode.Open)
             );
 
+            File.Delete(path);
+
             CloseStatus(async () =>
             {
                 ShowStatus("ツイートを送信しました。", false);

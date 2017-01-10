@@ -4,10 +4,14 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:loaders="clr-namespace:Loaders;assembly=MrMitch.Loaders"
-        mc:Ignorable="d" WindowStyle="None" Topmost="True"
+        mc:Ignorable="d" Topmost="True" WindowStartupLocation="CenterScreen"
         BorderBrush="#39F" BorderThickness="1" FontFamily="Meiryo UI"
         Title="スクリーンショットのツイート" Height="210" Width="498"
-        SizeToContent="Height">
+        SizeToContent="Height" SnapsToDevicePixels="True" UseLayoutRounding="True">
+    <WindowChrome.WindowChrome>
+        <WindowChrome CornerRadius="3" GlassFrameThickness="1" ResizeBorderThickness="8"
+                      UseAeroCaptionButtons="False" CaptionHeight="70" />
+    </WindowChrome.WindowChrome>
     <Window.Resources>
         <Storyboard x:Key="DialogShowAnimation" Storyboard.TargetProperty="(Grid.Opacity)">
             <DoubleAnimation From="0" To="1" Duration="0:0:0.3"/>

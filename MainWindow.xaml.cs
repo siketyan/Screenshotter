@@ -83,6 +83,21 @@ namespace Screenshotter
 
         private void OnKeyDown(KeyboardEvents e, Forms.Keys k)
         {
+            if (isTrimMode && e == KeyboardEvents.KeyDown && k == Forms.Keys.Enter)
+            {
+                var path = location + @"\~$Capture-"
+                           + DateTime.Now.ToString("yyyyMMddHHmmssfff")
+                           + ".temp.png";
+
+                screenshot.Save(path, Drawing.Imaging.ImageFormat.Png);
+                screenshot.Dispose();
+
+                new TweetWindow(path).ShowDialog();
+
+                isTrimMode = false;
+                return;
+            }
+
             if (isTrimMode ||
                 e != KeyboardEvents.KeyDown ||
                 k != Forms.Keys.PrintScreen) return;
@@ -151,6 +166,7 @@ namespace Screenshotter
 
             trimmed.Save(path, Drawing.Imaging.ImageFormat.Png);
             trimmed.Dispose();
+            screenshot.Dispose();
 
             new TweetWindow(path).ShowDialog();
 
