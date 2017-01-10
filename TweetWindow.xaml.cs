@@ -1,8 +1,12 @@
 ﻿using System;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Animation;
 
 namespace Screenshotter
@@ -44,6 +48,37 @@ namespace Screenshotter
                 CloseStatus();
                 Close();
             });
+        }
+
+        private void CountText(object sender, TextChangedEventArgs e)
+        {
+            var temp = Regex.Replace(
+                Message.Text,
+                @"s?https?://[-_.!~*'()a-zA-Z0-9;/?:@&=+$,%#]+",
+                "01234567890123"
+            ).Replace(Environment.NewLine, "1");
+
+            Count.Content = 140 - temp.Length - 24;
+            if ((int)Count.Content < 0)
+            {
+                Count.Foreground = Brushes.Red;
+                TweetButton.IsEnabled = false;
+            }
+            else
+            {
+                Count.Foreground = Brushes.Black;
+                TweetButton.IsEnabled = true;
+            }
+        }
+
+        private void ParseKeyboardShortcut(object sender, KeyEventArgs e)
+        {
+            if (e.Key != Key.Enter) return;
+            if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.None) return;
+            if ((int)Count.Content < 0) return;
+
+            e.Handled = true;
+            TweetAsync(null, null);
         }
 
         private void ShowStatus(string message, bool isLoader = true)

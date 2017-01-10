@@ -6,7 +6,7 @@
         xmlns:loaders="clr-namespace:Loaders;assembly=MrMitch.Loaders"
         mc:Ignorable="d" Topmost="True" WindowStartupLocation="CenterScreen"
         BorderBrush="#39F" BorderThickness="1" FontFamily="Meiryo UI" ShowInTaskbar="False"
-        Title="スクリーンショットのツイート" Height="210" Width="498" Icon="Resources/icon.ico"
+        Title="スクリーンショットのツイート" Height="240" Width="498" Icon="Resources/icon.ico"
         SizeToContent="Height" SnapsToDevicePixels="True" UseLayoutRounding="True">
     <WindowChrome.WindowChrome>
         <WindowChrome CornerRadius="3" GlassFrameThickness="1" ResizeBorderThickness="8"
@@ -26,10 +26,15 @@
         <StackPanel Margin="15,10">
             <Label FontSize="18">スクリーンショットのツイート</Label>
             <TextBox x:Name="Message" Height="100" Margin="0,5,0,10"
-                     BorderBrush="#BBB" SelectionBrush="#39F" FontSize="13" />
-            <Button Width="80" Height="26" Background="Transparent"
-                    BorderBrush="#BBB" FontSize="13" Click="TweetAsync"
-                    HorizontalAlignment="Right">ツイート</Button>
+                     BorderBrush="#BBB" SelectionBrush="#39F" FontSize="13"
+                     TextChanged="CountText" KeyDown="ParseKeyboardShortcut" />
+            <DockPanel LastChildFill="False">
+                <Button x:Name="TweetButton" DockPanel.Dock="Right"
+                        Width="80" Height="26" Background="Transparent"
+                        BorderBrush="#BBB" FontSize="13" Click="TweetAsync">ツイート</Button>
+                <Label x:Name="Count" DockPanel.Dock="Right">116</Label>
+                <Label>Ctrl+Enterでツイートできます</Label>
+            </DockPanel>
         </StackPanel>
 
         <Grid x:Name="StatusGrid" Background="#BB000000" Opacity="0" IsHitTestVisible="False">
