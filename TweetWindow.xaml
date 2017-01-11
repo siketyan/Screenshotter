@@ -27,7 +27,8 @@
             <Label FontSize="18">スクリーンショットのツイート</Label>
             <TextBox x:Name="Message" Height="100" Margin="0,5,0,10"
                      BorderBrush="#BBB" SelectionBrush="#39F" FontSize="13"
-                     TextChanged="CountText" KeyDown="ParseKeyboardShortcut" />
+                     TextChanged="CountText" KeyDown="ParseKeyboardShortcut"
+                     AcceptsReturn="True" />
             <DockPanel LastChildFill="False">
                 <Button x:Name="TweetButton" DockPanel.Dock="Right"
                         Width="80" Height="26" Background="Transparent"
