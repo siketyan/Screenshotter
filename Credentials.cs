@@ -2,14 +2,8 @@
 
 namespace Screenshotter
 {
-    public class Config
+    public class Credentials
     {
-        [JsonProperty("consumerKey")]
-        public string ConsumerKey { get; set; }
-
-        [JsonProperty("consumerSecret")]
-        public string ConsumerSecret { get; set; }
-
         [JsonProperty("accessToken")]
         public string AccessToken { get; set; }
 
