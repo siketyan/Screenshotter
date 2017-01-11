@@ -6,7 +6,6 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -87,6 +86,7 @@ namespace Screenshotter
 
             if (iconStream != null)
             {
+
                 notifyIcon = new Forms.NotifyIcon()
                 {
                     Text = @"Screenshotter",
@@ -113,7 +113,7 @@ namespace Screenshotter
             if (isTrimMode && e == KeyboardEvents.KeyDown && k == Forms.Keys.Enter)
             {
                 Disable();
-                disablePrintScreen = true;
+                globalHook.UninstallHook();
                 isTrimMode = false;
 
                 var path = location + @"\~$Capture-"
@@ -125,11 +125,12 @@ namespace Screenshotter
 
                 new TweetWindow(path).ShowDialog();
 
-                disablePrintScreen = false;
+                globalHook.InstallHook();
+                isTrimMode = true;
                 return;
             }
 
-            if (isTrimMode || disablePrintScreen ||
+            if (isTrimMode ||
                 e != KeyboardEvents.KeyDown ||
                 k != Forms.Keys.PrintScreen) return;
 
@@ -163,6 +164,7 @@ namespace Screenshotter
             SelectedArea.Visibility = Visibility.Collapsed;
             LayoutRoot.ReleaseMouseCapture();
             Disable();
+            globalHook.UninstallHook();
 
             Point finishPosition = e.GetPosition(LayoutRoot);
             int left, top, width, height;
@@ -201,6 +203,7 @@ namespace Screenshotter
 
             new TweetWindow(path).ShowDialog();
 
+            globalHook.InstallHook();
             isTrimMode = false;
         }
 
