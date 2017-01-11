@@ -4,7 +4,7 @@
         WindowStyle="None" Topmost="True" Opacity="1" Icon="Resources/icon.ico"
         Margin="0" Padding="0" AllowsTransparency="True"
         Background="Transparent" ShowInTaskbar="False" Title="MainWindow"
-        Loaded="Init" WindowState="Maximized" IsHitTestVisible="False"
+        Loaded="InitAsync" WindowState="Maximized" IsHitTestVisible="False"
         FontFamily="Meiryo UI">
     <Grid>
         <Grid x:Name="LayoutRoot" MouseDown="OnDragStart"

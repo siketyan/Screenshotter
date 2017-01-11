@@ -1,12 +1,12 @@
-﻿<Window x:Class="Screenshotter.TweetWindow"
+﻿<Window x:Class="Screenshotter.AuthorizeWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:loaders="clr-namespace:Loaders;assembly=MrMitch.Loaders"
-        mc:Ignorable="d" Topmost="True" WindowStartupLocation="CenterScreen"
-        BorderBrush="#39F" BorderThickness="1" FontFamily="Meiryo UI" ShowInTaskbar="False"
-        Title="スクリーンショットのツイート" Height="210" Width="498" Icon="Resources/icon.ico"
+        mc:Ignorable="d" WindowStartupLocation="CenterScreen" Loaded="InitAsync"
+        BorderBrush="#39F" BorderThickness="1" FontFamily="Meiryo UI"
+        Title="Twitterアカウントの認証" Height="130" Width="498" Icon="Resources/icon.ico"
         SizeToContent="Height" SnapsToDevicePixels="True" UseLayoutRounding="True">
     <WindowChrome.WindowChrome>
         <WindowChrome CornerRadius="3" GlassFrameThickness="1" ResizeBorderThickness="8"
@@ -23,17 +23,30 @@
     </Window.Resources>
     
     <Grid>
-        <StackPanel Margin="15,10">
-            <Label FontSize="18">スクリーンショットのツイート</Label>
-            <TextBox x:Name="Message" Height="100" Margin="0,5,0,10"
-                     BorderBrush="#BBB" SelectionBrush="#39F" FontSize="13"
-                     TextChanged="CountText" KeyDown="ParseKeyboardShortcut" />
-            <DockPanel LastChildFill="False">
-                <Button x:Name="TweetButton" DockPanel.Dock="Right"
-                        Width="80" Height="26" Background="Transparent"
-                        BorderBrush="#BBB" FontSize="13" Click="TweetAsync">ツイート</Button>
-                <Label x:Name="Count" DockPanel.Dock="Right">116</Label>
-                <Label>Ctrl+Enterでツイートできます</Label>
+        <StackPanel Margin="15,10,15,15">
+            <Label FontSize="18">Twitterアカウントの認証</Label>
+            <DockPanel>
+                <Button DockPanel.Dock="Right" Width="100" Height="26"
+                        Background="Transparent" BorderBrush="#BBB"
+                        FontSize="13" Click="OpenInBrowser">ブラウザで開く</Button>
+                <Button DockPanel.Dock="Right" Width="80" Height="26"
+                        Background="Transparent" Margin="0,0,5,0"
+                        BorderBrush="#BBB" FontSize="13" Click="CopyUrl">コピー</Button>
+                
+                <Label>
+                    <TextBlock x:Name="AuthorizeUrl" TextTrimming="CharacterEllipsis">
+                        認証の準備をしています...
+                    </TextBlock>
+                </Label>
+            </DockPanel>
+            <DockPanel Margin="0,5,0,0">
+                <Button DockPanel.Dock="Right" Width="80" Height="26" Background="Transparent"
+                        BorderBrush="#BBB" Margin="5,0,0,0" FontSize="13" Click="AuthorizeAsync">認証</Button>
+                
+                <Label>PINコード:</Label>
+                <TextBox x:Name="Pin" BorderBrush="#BBB" FontSize="13" Height="26" MaxLength="7"
+                         PreviewTextInput="CheckPin" InputMethod.IsInputMethodEnabled="False"
+                         VerticalContentAlignment="Center" HorizontalContentAlignment="Center" />
             </DockPanel>
         </StackPanel>
 
@@ -46,7 +59,7 @@
                     <Label x:Name="Success" VerticalContentAlignment="Center"
                            FontSize="40" Foreground="#009688" Visibility="Collapsed">✔</Label>
                     <Label x:Name="Status" VerticalContentAlignment="Center"
-                           FontSize="14" Foreground="#333" Margin="0,-2,0,0">ツイートしています..</Label>
+                           FontSize="14" Foreground="#333" Margin="0,-2,0,0">認証しています..</Label>
                 </StackPanel>
             </Border>
         </Grid>
