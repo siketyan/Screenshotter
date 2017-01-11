@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Reflection;
+using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
@@ -35,6 +36,7 @@ namespace Screenshotter
         {
             InitializeComponent();
             location = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            AppDomain.CurrentDomain.FirstChanceException += OnExceptionThrow;
         }
 
         ~MainWindow()
@@ -222,6 +224,41 @@ namespace Screenshotter
                 Canvas.SetTop(SelectedArea, nowPosition.Y);
                 SelectedArea.Height = startPosition.Y - nowPosition.Y;
             }
+        }
+
+        private void OnExceptionThrow(object sender, FirstChanceExceptionEventArgs e)
+        {
+            if (e.Exception.Source == "PresentationCore"
+             || e.Exception.InnerException.Source == "PresentationCore") return;
+
+            var msg = "予期しない例外が発生したため、Screenshotterを終了します。\n"
+                    + "以下のレポートを開発者に報告してください。\n"
+                    + "※OKボタンをクリックするとクリップボードにレポートをコピーして終了します。\n"
+                    + "※キャンセルボタンをクリックするとそのまま終了します。\n\n"
+                    + e.Exception.GetType().ToString() + "\n"
+                    + e.Exception.Message + "\n"
+                    + e.Exception.StackTrace + "\n"
+                    + e.Exception.Source;
+
+            if (e.Exception.InnerException != null)
+            {
+                msg += "\nInner: "
+                     + e.Exception.InnerException.GetType().ToString() + "\n"
+                     + e.Exception.InnerException.Message + "\n"
+                     + e.Exception.InnerException.StackTrace + "\n"
+                     + e.Exception.InnerException.Source;
+            }
+
+            var result = MessageBox.Show(
+                            msg, "Error - Screenshotter",
+                            MessageBoxButton.OKCancel, MessageBoxImage.Error
+                         );
+            if (result == MessageBoxResult.OK)
+            {
+                Clipboard.SetDataObject(msg, true);
+            }
+
+            Environment.Exit(0);
         }
 
         private void Enable()
