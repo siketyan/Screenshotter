@@ -24,6 +24,7 @@ namespace Screenshotter
     {
         private bool isMouseDown;
         private bool isTrimMode;
+        private bool disablePrintScreen;
         private Point startPosition;
         private KeyboardHook globalHook;
         private Drawing.Bitmap screenshot;
@@ -111,6 +112,10 @@ namespace Screenshotter
             if (isTrimMode && e == KeyboardEvents.KeyDown && k == Forms.Keys.Escape) Close();
             if (isTrimMode && e == KeyboardEvents.KeyDown && k == Forms.Keys.Enter)
             {
+                Disable();
+                disablePrintScreen = true;
+                isTrimMode = false;
+
                 var path = location + @"\~$Capture-"
                            + DateTime.Now.ToString("yyyyMMddHHmmssfff")
                            + ".temp.png";
@@ -120,11 +125,11 @@ namespace Screenshotter
 
                 new TweetWindow(path).ShowDialog();
 
-                isTrimMode = false;
+                disablePrintScreen = false;
                 return;
             }
 
-            if (isTrimMode ||
+            if (isTrimMode || disablePrintScreen ||
                 e != KeyboardEvents.KeyDown ||
                 k != Forms.Keys.PrintScreen) return;
 
