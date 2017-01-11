@@ -7,11 +7,11 @@ using System.Reflection;
 using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
-using System.Windows.Media.Animation;
 using Drawing = System.Drawing;
 using Forms = System.Windows.Forms;
 
@@ -24,12 +24,13 @@ namespace Screenshotter
     {
         private bool isMouseDown;
         private bool isTrimMode;
-        private string location;
+        private bool disablePrintScreen;
         private Point startPosition;
         private KeyboardHook globalHook;
         private Drawing.Bitmap screenshot;
         private Forms.NotifyIcon notifyIcon;
 
+        public static string location;
         public static Tokens token;
 
         public MainWindow()
@@ -46,38 +47,38 @@ namespace Screenshotter
             notifyIcon.Dispose();
         }
 
-        private void Init(object sender, RoutedEventArgs e)
+        private async void InitAsync(object sender, RoutedEventArgs e)
         {
-            if (File.Exists(@".\config.json"))
-            {
-                using (
-                    var sr = new StreamReader(
-                                  @".\config.json", Encoding.GetEncoding("Shift_JIS")
-                             )
-                ){
-                    var json = sr.ReadToEnd();
-                    var config = JsonConvert.DeserializeObject<Config>(json);
+            ReAuth:
 
-                    try
-                    {
-                        token = Tokens.Create(
-                            config.ConsumerKey,
-                            config.ConsumerSecret,
-                            config.AccessToken,
-                            config.AccessSecret
-                        );
-                    }
-                    catch
-                    {
-                        MessageBox.Show("Twitterにログインできませんでした。Screenshotterを終了します。");
-                        Close();
-                    }
-                }
-            }
-            else
+            if (!File.Exists(location + @"\credentials.json"))
             {
-                MessageBox.Show("設定ファイルが見つかりませんでした。Screenshotterを終了します。");
-                Close();
+                new AuthorizeWindow().ShowDialog();
+                goto ReAuth;
+            }
+
+            using (var reader = new StreamReader(location + @"\credentials.json"))
+            {
+                try
+                {
+                    await Task.Run(() =>
+                    {
+                        var json = reader.ReadToEnd();
+                        var credentials = JsonConvert.DeserializeObject<Credentials>(json);
+
+                        token = Tokens.Create(
+                            __Private.ConsumerKey,
+                            __Private.ConsumerSecret,
+                            credentials.AccessToken,
+                            credentials.AccessSecret
+                        );
+                    });
+                }
+                catch
+                {
+                    MessageBox.Show("Twitterにログインできませんでした。Screenshotterを終了します。");
+                    Close();
+                }
             }
 
             var iconStream = Application.GetResourceStream(
@@ -108,8 +109,13 @@ namespace Screenshotter
 
         private void OnKeyDown(KeyboardEvents e, Forms.Keys k)
         {
+            if (isTrimMode && e == KeyboardEvents.KeyDown && k == Forms.Keys.Escape) Close();
             if (isTrimMode && e == KeyboardEvents.KeyDown && k == Forms.Keys.Enter)
             {
+                Disable();
+                disablePrintScreen = true;
+                isTrimMode = false;
+
                 var path = location + @"\~$Capture-"
                            + DateTime.Now.ToString("yyyyMMddHHmmssfff")
                            + ".temp.png";
@@ -119,11 +125,11 @@ namespace Screenshotter
 
                 new TweetWindow(path).ShowDialog();
 
-                isTrimMode = false;
+                disablePrintScreen = false;
                 return;
             }
 
-            if (isTrimMode ||
+            if (isTrimMode || disablePrintScreen ||
                 e != KeyboardEvents.KeyDown ||
                 k != Forms.Keys.PrintScreen) return;
 
@@ -250,7 +256,7 @@ namespace Screenshotter
             }
 
             var result = MessageBox.Show(
-                            msg, "Error",
+                            msg, "Error - Screenshotter",
                             MessageBoxButton.OKCancel, MessageBoxImage.Error
                          );
             if (result == MessageBoxResult.OK)

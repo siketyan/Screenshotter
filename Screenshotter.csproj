@@ -81,10 +81,18 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Config.cs" />
+    <Compile Include="AuthorizeWindow.xaml.cs">
+      <DependentUpon>AuthorizeWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Credentials.cs" />
     <Compile Include="TweetWindow.xaml.cs">
       <DependentUpon>TweetWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="__Private.cs" />
+    <Page Include="AuthorizeWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
