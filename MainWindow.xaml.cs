@@ -108,6 +108,7 @@ namespace Screenshotter
 
         private void OnKeyDown(KeyboardEvents e, Forms.Keys k)
         {
+            if (isTrimMode && e == KeyboardEvents.KeyDown && k == Forms.Keys.Escape) Close();
             if (isTrimMode && e == KeyboardEvents.KeyDown && k == Forms.Keys.Enter)
             {
                 var path = location + @"\~$Capture-"

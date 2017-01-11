@@ -23,6 +23,7 @@ namespace Screenshotter
             this.path = path;
 
             InitializeComponent();
+            Keyboard.Focus(Message);
         }
 
         private async void TweetAsync(object sender, RoutedEventArgs e)
@@ -73,6 +74,7 @@ namespace Screenshotter
 
         private void ParseKeyboardShortcut(object sender, KeyEventArgs e)
         {
+            if (e.Key == Key.Escape) Close();
             if (e.Key != Key.Enter) return;
             if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.None) return;
             if ((int)Count.Content < 0) return;
