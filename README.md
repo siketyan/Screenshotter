@@ -7,6 +7,19 @@ Windows標準のSnipping Tool風にスクリーンショットを取得し、メ
 - スクリーンショット取得からツイートまですべてこれ一つで行えます。
 - 画面全体のスクリーンショットを取得してからトリミングするので、タイミングを逃しません。
 
+## Before Building
+- /__Private.cs
+```cs
+namespace Screenshotter
+{
+    public static class __Private
+    {
+        public static const string ConsumerKey = "[YOUR CONSUMER KEY]";
+        public static const string ConsumerSecret = "[YOUR CONSUMER SECRET]";
+    }
+}
+```
+
 ## Licenses
 - CoreTweet
   > The MIT License (MIT)  
