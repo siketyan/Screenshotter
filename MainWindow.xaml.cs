@@ -162,7 +162,6 @@ namespace Screenshotter
             isMouseDown = false;
             SelectedArea.Visibility = Visibility.Collapsed;
             LayoutRoot.ReleaseMouseCapture();
-            Disable();
             globalHook.UninstallHook();
 
             Point finishPosition = e.GetPosition(LayoutRoot);
@@ -189,6 +188,9 @@ namespace Screenshotter
                 top = (int)finishPosition.Y;
                 height = (int)(startPosition.Y - finishPosition.Y);
             }
+
+            if (width < 1 || height < 1) return;
+            Disable();
 
             var rect = new Drawing.Rectangle(left, top, width, height);
             var trimmed = screenshot.Clone(rect, screenshot.PixelFormat);
