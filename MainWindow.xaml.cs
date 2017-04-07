@@ -23,7 +23,6 @@ namespace Screenshotter
     {
         private bool isMouseDown;
         private bool isTrimMode;
-        private bool disablePrintScreen;
         private Point startPosition;
         private KeyboardHook globalHook;
         private Drawing.Bitmap screenshot;
