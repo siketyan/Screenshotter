@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:loaders="clr-namespace:Loaders;assembly=MrMitch.Loaders"
         mc:Ignorable="d" WindowStartupLocation="CenterScreen" Loaded="InitAsync"
         BorderBrush="#39F" BorderThickness="1" FontFamily="Meiryo UI"
         Title="Twitterアカウントの認証" Height="130" Width="498" Icon="Resources/icon.ico"
@@ -54,10 +53,12 @@
             <Border Background="#FFF" Width="256" Height="72"
                     Padding="20,0" CornerRadius="3">
                 <StackPanel Orientation="Horizontal">
-                    <loaders:ChromeLoader x:Name="Loader" FontSize="12" Width="42" Height="42"
-                                          Thickness="3.5" Margin="0,0,13,0" />
+                    <Label x:Name="Loader" VerticalContentAlignment="Center"
+                           FontFamily="Resources/#Material Icons"
+                           FontSize="36" Foreground="#555" Visibility="Visible"></Label>
                     <Label x:Name="Success" VerticalContentAlignment="Center"
-                           FontSize="40" Foreground="#009688" Visibility="Collapsed">✔</Label>
+                           FontFamily="Resources/#Material Icons"
+                           FontSize="40" Foreground="#009688" Visibility="Collapsed"></Label>
                     <Label x:Name="Status" VerticalContentAlignment="Center"
                            FontSize="14" Foreground="#333" Margin="0,-2,0,0">認証しています..</Label>
                 </StackPanel>
