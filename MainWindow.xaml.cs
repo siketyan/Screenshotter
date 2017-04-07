@@ -108,7 +108,12 @@ namespace Screenshotter
 
         private void OnKeyDown(KeyboardEvents e, Forms.Keys k)
         {
-            if (isTrimMode && e == KeyboardEvents.KeyDown && k == Forms.Keys.Escape) Close();
+            if (isTrimMode && e == KeyboardEvents.KeyDown && k == Forms.Keys.Escape)
+            {
+                Disable();
+                isTrimMode = false;
+            }
+
             if (isTrimMode && e == KeyboardEvents.KeyDown && k == Forms.Keys.Enter)
             {
                 Disable();
