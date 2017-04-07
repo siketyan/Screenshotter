@@ -37,11 +37,11 @@ namespace Screenshotter
 - Global System Hooks
   > The Code Project Open License (CPOL)
   >   
-  > © 2004-2005 Michael Kennedy  
+  > Copyright (c) 2004-2005 Michael Kennedy  
   > https://www.codeproject.com/info/cpol10.aspx
 
-- WPF Loaders
-  > The MIT License (MIT)  
+- Material Design Icons
+  > The Apache License Version 2.0  
   >   
-  > Copyright (c) 2015 Mickael GOETZ  
-  > https://github.com/MrMitch/WPF-Loaders/blob/master/MrMitch.Loaders/LICENSE.txt
+  > Copyright (c) 2014 Google  
+  > https://github.com/google/material-design-icons/blob/master/LICENSE
