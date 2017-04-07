@@ -20,7 +20,7 @@
 
         <Border x:Name="TrimNotify" BorderBrush="#39F" BorderThickness="1"
                 Background="#99FFFFFF" Width="320" Height="103"
-                Visibility="Collapsed">
+                Visibility="Collapsed" IsHitTestVisible="False">
             <StackPanel Margin="10">
                 <Label FontSize="18" HorizontalContentAlignment="Center">スクリーンショットのトリミング</Label>
                 <Label FontSize="13" HorizontalContentAlignment="Center">

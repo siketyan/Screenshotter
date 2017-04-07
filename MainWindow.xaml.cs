@@ -23,7 +23,6 @@ namespace Screenshotter
     {
         private bool isMouseDown;
         private bool isTrimMode;
-        private bool disablePrintScreen;
         private Point startPosition;
         private KeyboardHook globalHook;
         private Drawing.Bitmap screenshot;
@@ -109,7 +108,12 @@ namespace Screenshotter
 
         private void OnKeyDown(KeyboardEvents e, Forms.Keys k)
         {
-            if (isTrimMode && e == KeyboardEvents.KeyDown && k == Forms.Keys.Escape) Close();
+            if (isTrimMode && e == KeyboardEvents.KeyDown && k == Forms.Keys.Escape)
+            {
+                Disable();
+                isTrimMode = false;
+            }
+
             if (isTrimMode && e == KeyboardEvents.KeyDown && k == Forms.Keys.Enter)
             {
                 Disable();
@@ -163,7 +167,6 @@ namespace Screenshotter
             isMouseDown = false;
             SelectedArea.Visibility = Visibility.Collapsed;
             LayoutRoot.ReleaseMouseCapture();
-            Disable();
             globalHook.UninstallHook();
 
             Point finishPosition = e.GetPosition(LayoutRoot);
@@ -190,6 +193,9 @@ namespace Screenshotter
                 top = (int)finishPosition.Y;
                 height = (int)(startPosition.Y - finishPosition.Y);
             }
+
+            if (width < 1 || height < 1) return;
+            Disable();
 
             var rect = new Drawing.Rectangle(left, top, width, height);
             var trimmed = screenshot.Clone(rect, screenshot.PixelFormat);
