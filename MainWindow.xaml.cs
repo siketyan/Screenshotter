@@ -6,6 +6,7 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -230,8 +231,8 @@ namespace Screenshotter
 
         private void OnExceptionThrow(object sender, FirstChanceExceptionEventArgs e)
         {
-            if (e.Exception.Source == "PresentationCore"
-             || e.Exception.InnerException.Source == "PresentationCore") return;
+            if (e.Exception.Source == "PresentationCore" ||
+                e.Exception.Source == "System.Xaml") return;
 
             var msg = "予期しない例外が発生したため、Screenshotterを終了します。\n"
                     + "以下のレポートを開発者に報告してください。\n"
@@ -257,7 +258,14 @@ namespace Screenshotter
                          );
             if (result == MessageBoxResult.OK)
             {
-                Clipboard.SetDataObject(msg, true);
+                var thread = new Thread(() =>
+                {
+                    Clipboard.SetDataObject(msg, true);
+                });
+
+                thread.SetApartmentState(ApartmentState.STA);
+                thread.Start();
+                thread.Join();
             }
 
             Environment.Exit(0);
