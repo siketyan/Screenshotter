@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -8,6 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using Drawing = System.Drawing;
 
 namespace Screenshotter
 {
@@ -16,31 +18,33 @@ namespace Screenshotter
     /// </summary>
     public partial class TweetWindow : Window
     {
-        private string path;
+        private Drawing.Bitmap screenshot;
 
-        public TweetWindow(string path)
+        public TweetWindow(Drawing.Bitmap screenshot)
         {
-            this.path = path;
+            this.screenshot = screenshot;
 
             InitializeComponent();
-            Keyboard.Focus(Message);
+            Keyboard.Focus(this.Message);
         }
 
         private async void TweetAsync(object sender, RoutedEventArgs e)
         {
             ShowStatus("ツイートしています...");
 
-            if (!File.Exists(path))
+            if (this.screenshot == null)
             {
                 MessageBox.Show("スクリーンショットが失われたため、ツイートできません。");
                 Close();
             }
 
-            await MainWindow.token.Statuses.UpdateWithMediaAsync(
-                      Message.Text, new FileStream(path, FileMode.Open)
-            );
-
-            File.Delete(path);
+            using (var stream = new MemoryStream())
+            {
+                this.screenshot.Save(stream, Drawing.Imaging.ImageFormat.Jpeg);
+                await MainWindow.token.Statuses.UpdateWithMediaAsync(
+                          this.Message.Text, stream
+                );
+            }
 
             CloseStatus(async () =>
             {
@@ -54,21 +58,21 @@ namespace Screenshotter
         private void CountText(object sender, TextChangedEventArgs e)
         {
             var temp = Regex.Replace(
-                Message.Text,
+                this.Message.Text,
                 @"s?https?://[-_.!~*'()a-zA-Z0-9;/?:@&=+$,%#]+",
                 "01234567890123"
             ).Replace(Environment.NewLine, "1");
 
-            Count.Content = 140 - temp.Length - 24;
-            if ((int)Count.Content < 0)
+            this.Count.Content = 140 - temp.Length - 24;
+            if ((int)this.Count.Content < 0)
             {
-                Count.Foreground = Brushes.Red;
-                TweetButton.IsEnabled = false;
+                this.Count.Foreground = Brushes.Red;
+                this.TweetButton.IsEnabled = false;
             }
             else
             {
-                Count.Foreground = Brushes.Black;
-                TweetButton.IsEnabled = true;
+                this.Count.Foreground = Brushes.Black;
+                this.TweetButton.IsEnabled = true;
             }
         }
 
@@ -77,7 +81,7 @@ namespace Screenshotter
             if (e.Key == Key.Escape) Close();
             if (e.Key != Key.Enter) return;
             if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.None) return;
-            if ((int)Count.Content < 0) return;
+            if ((int)this.Count.Content < 0) return;
 
             e.Handled = true;
             TweetAsync(null, null);
@@ -85,28 +89,33 @@ namespace Screenshotter
 
         private void ShowStatus(string message, bool isLoader = true)
         {
-            Status.Content = message;
-            Loader.Visibility = (isLoader) ? Visibility.Visible
+            this.Status.Content = message;
+            this.Loader.Visibility = (isLoader) ? Visibility.Visible
                                            : Visibility.Collapsed;
-            Success.Visibility = (isLoader) ? Visibility.Collapsed
+            this.Success.Visibility = (isLoader) ? Visibility.Collapsed
                                             : Visibility.Visible;
 
-            Storyboard sb = FindResource("DialogShowAnimation") as Storyboard;
-            Storyboard.SetTarget(sb, StatusGrid);
-            sb.Completed += (s, a) => StatusGrid.IsHitTestVisible = true;
+            var sb = FindResource("DialogShowAnimation") as Storyboard;
+            Storyboard.SetTarget(sb, this.StatusGrid);
+            sb.Completed += (s, a) => this.StatusGrid.IsHitTestVisible = true;
             sb.Begin();
         }
 
         private void CloseStatus(Action doAfterClose = null)
         {
-            Storyboard sb = FindResource("DialogCloseAnimation") as Storyboard;
-            Storyboard.SetTarget(sb, StatusGrid);
+            var sb = FindResource("DialogCloseAnimation") as Storyboard;
+            Storyboard.SetTarget(sb, this.StatusGrid);
             sb.Completed += (s, a) =>
             {
-                StatusGrid.IsHitTestVisible = false;
+                this.StatusGrid.IsHitTestVisible = false;
                 doAfterClose?.Invoke();
             };
             sb.Begin();
+        }
+
+        private void OnClosing(object sender, CancelEventArgs e)
+        {
+            this.screenshot?.Dispose();
         }
     }
 }

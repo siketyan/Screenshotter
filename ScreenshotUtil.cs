@@ -14,11 +14,11 @@ namespace Screenshotter
     {
         public static Bitmap GetScreenshot()
         {
-            Bitmap bmp = new Bitmap(
+            var bmp = new Bitmap(
                            Screen.PrimaryScreen.Bounds.Width,
                            Screen.PrimaryScreen.Bounds.Height
                       );
-            Graphics g = Graphics.FromImage(bmp);
+            var g = Graphics.FromImage(bmp);
 
             g.CopyFromScreen(new Drawing.Point(0, 0), new Drawing.Point(0, 0), bmp.Size);
             g.Dispose();
@@ -33,7 +33,7 @@ namespace Screenshotter
         public static BitmapSource ToBitmapSource(this Bitmap bmp)
         {
             BitmapSource source;
-            IntPtr hBitmap = bmp.GetHbitmap();
+            var hBitmap = bmp.GetHbitmap();
 
             try
             {
