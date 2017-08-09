@@ -6,7 +6,8 @@
         mc:Ignorable="d" Topmost="True" WindowStartupLocation="CenterScreen"
         BorderBrush="#39F" BorderThickness="1" FontFamily="Meiryo UI" ShowInTaskbar="False"
         Title="スクリーンショットのツイート" Height="210" Width="498" Icon="Resources/icon.ico"
-        SizeToContent="Height" SnapsToDevicePixels="True" UseLayoutRounding="True">
+        SizeToContent="Height" SnapsToDevicePixels="True" UseLayoutRounding="True"
+        Closing="OnClosing">
     <WindowChrome.WindowChrome>
         <WindowChrome CornerRadius="3" GlassFrameThickness="1" ResizeBorderThickness="8"
                       UseAeroCaptionButtons="False" CaptionHeight="43" />

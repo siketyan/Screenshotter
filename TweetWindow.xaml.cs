@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -8,6 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using Drawing = System.Drawing;
 
 namespace Screenshotter
 {
@@ -16,11 +18,11 @@ namespace Screenshotter
     /// </summary>
     public partial class TweetWindow : Window
     {
-        private string path;
+        private Drawing.Bitmap screenshot;
 
-        public TweetWindow(string path)
+        public TweetWindow(Drawing.Bitmap screenshot)
         {
-            this.path = path;
+            this.screenshot = screenshot;
 
             InitializeComponent();
             Keyboard.Focus(this.Message);
@@ -30,17 +32,19 @@ namespace Screenshotter
         {
             ShowStatus("ツイートしています...");
 
-            if (!File.Exists(this.path))
+            if (this.screenshot == null)
             {
                 MessageBox.Show("スクリーンショットが失われたため、ツイートできません。");
                 Close();
             }
 
-            await MainWindow.token.Statuses.UpdateWithMediaAsync(
-                      this.Message.Text, new FileStream(this.path, FileMode.Open)
-            );
-
-            File.Delete(this.path);
+            using (var stream = new MemoryStream())
+            {
+                this.screenshot.Save(stream, Drawing.Imaging.ImageFormat.Jpeg);
+                await MainWindow.token.Statuses.UpdateWithMediaAsync(
+                          this.Message.Text, stream
+                );
+            }
 
             CloseStatus(async () =>
             {
@@ -107,6 +111,11 @@ namespace Screenshotter
                 doAfterClose?.Invoke();
             };
             sb.Begin();
+        }
+
+        private void OnClosing(object sender, CancelEventArgs e)
+        {
+            this.screenshot?.Dispose();
         }
     }
 }

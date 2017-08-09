@@ -120,14 +120,7 @@ namespace Screenshotter
                 this.globalHook.UninstallHook();
                 this.isTrimMode = false;
 
-                var path = location + @"\~$Capture-"
-                           + DateTime.Now.ToString("yyyyMMddHHmmssfff")
-                           + ".temp.png";
-
-                this.screenshot.Save(path, Drawing.Imaging.ImageFormat.Png);
-                this.screenshot.Dispose();
-
-                new TweetWindow(path).ShowDialog();
+                new TweetWindow(this.screenshot).ShowDialog();
 
                 this.globalHook.InstallHook();
                 this.isTrimMode = true;
@@ -199,15 +192,9 @@ namespace Screenshotter
 
             var rect = new Drawing.Rectangle(left, top, width, height);
             var trimmed = this.screenshot.Clone(rect, this.screenshot.PixelFormat);
-            var path = location + @"\~$Capture-"
-                           + DateTime.Now.ToString("yyyyMMddHHmmssfff")
-                           + ".temp.png";
-
-            trimmed.Save(path, Drawing.Imaging.ImageFormat.Png);
-            trimmed.Dispose();
             this.screenshot.Dispose();
 
-            new TweetWindow(path).ShowDialog();
+            new TweetWindow(trimmed).ShowDialog();
 
             this.globalHook.InstallHook();
             this.isTrimMode = false;
