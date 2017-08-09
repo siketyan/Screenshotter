@@ -42,7 +42,7 @@ namespace Screenshotter
             {
                 this.screenshot.Save(stream, Drawing.Imaging.ImageFormat.Jpeg);
                 await MainWindow.token.Statuses.UpdateWithMediaAsync(
-                          this.Message.Text, stream
+                          this.Message.Text, stream.ToArray()
                 );
             }
 
