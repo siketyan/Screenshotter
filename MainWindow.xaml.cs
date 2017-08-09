@@ -40,9 +40,9 @@ namespace Screenshotter
 
         ~MainWindow()
         {
-            globalHook.UninstallHook();
-            globalHook.Dispose();
-            notifyIcon.Dispose();
+            this.globalHook.UninstallHook();
+            this.globalHook.Dispose();
+            this.notifyIcon.Dispose();
         }
 
         private async void InitAsync(object sender, RoutedEventArgs e)
@@ -86,7 +86,7 @@ namespace Screenshotter
             if (iconStream != null)
             {
 
-                notifyIcon = new Forms.NotifyIcon()
+                this.notifyIcon = new Forms.NotifyIcon()
                 {
                     Text = @"Screenshotter",
                     Icon = new Drawing.Icon(iconStream.Stream),
@@ -97,147 +97,147 @@ namespace Screenshotter
                     ContextMenu = new Forms.ContextMenu()
                 };
 
-                notifyIcon.ContextMenu.MenuItems.Add("終了", new EventHandler((s, a) => Close()));
-                notifyIcon.ShowBalloonTip(2000);
+                this.notifyIcon.ContextMenu.MenuItems.Add("終了", new EventHandler((s, a) => Close()));
+                this.notifyIcon.ShowBalloonTip(2000);
             }
 
-            globalHook = new KeyboardHook();
-            globalHook.KeyboardEvent += new KeyboardHook.KeyboardEventHandler(OnKeyDown);
-            globalHook.InstallHook();
+            this.globalHook = new KeyboardHook();
+            this.globalHook.KeyboardEvent += new KeyboardHook.KeyboardEventHandler(OnKeyDown);
+            this.globalHook.InstallHook();
         }
 
         private void OnKeyDown(KeyboardEvents e, Forms.Keys k)
         {
-            if (isTrimMode && e == KeyboardEvents.KeyDown && k == Forms.Keys.Escape)
+            if (this.isTrimMode && e == KeyboardEvents.KeyDown && k == Forms.Keys.Escape)
             {
                 Disable();
-                isTrimMode = false;
+                this.isTrimMode = false;
             }
 
-            if (isTrimMode && e == KeyboardEvents.KeyDown && k == Forms.Keys.Enter)
+            if (this.isTrimMode && e == KeyboardEvents.KeyDown && k == Forms.Keys.Enter)
             {
                 Disable();
-                globalHook.UninstallHook();
-                isTrimMode = false;
+                this.globalHook.UninstallHook();
+                this.isTrimMode = false;
 
                 var path = location + @"\~$Capture-"
                            + DateTime.Now.ToString("yyyyMMddHHmmssfff")
                            + ".temp.png";
 
-                screenshot.Save(path, Drawing.Imaging.ImageFormat.Png);
-                screenshot.Dispose();
+                this.screenshot.Save(path, Drawing.Imaging.ImageFormat.Png);
+                this.screenshot.Dispose();
 
                 new TweetWindow(path).ShowDialog();
 
-                globalHook.InstallHook();
-                isTrimMode = true;
+                this.globalHook.InstallHook();
+                this.isTrimMode = true;
                 return;
             }
 
-            if (isTrimMode ||
+            if (this.isTrimMode ||
                 e != KeyboardEvents.KeyDown ||
                 k != Forms.Keys.PrintScreen) return;
 
-            LayoutRoot.Width = Forms.Screen.PrimaryScreen.Bounds.Width;
-            LayoutRoot.Height = Forms.Screen.PrimaryScreen.Bounds.Height;
+            this.LayoutRoot.Width = Forms.Screen.PrimaryScreen.Bounds.Width;
+            this.LayoutRoot.Height = Forms.Screen.PrimaryScreen.Bounds.Height;
 
-            screenshot = ScreenshotUtil.GetScreenshot();
-            Screenshot.Source = screenshot.ToBitmapSource();
+            this.screenshot = ScreenshotUtil.GetScreenshot();
+            this.Screenshot.Source = this.screenshot.ToBitmapSource();
 
-            isTrimMode = true;
+            this.isTrimMode = true;
             Enable();
         }
 
         private void OnDragStart(object sender, MouseButtonEventArgs e)
         {
-            isMouseDown = true;
-            startPosition = e.GetPosition(LayoutRoot);
-            LayoutRoot.CaptureMouse();
+            this.isMouseDown = true;
+            this.startPosition = e.GetPosition(this.LayoutRoot);
+            this.LayoutRoot.CaptureMouse();
                     
-            Canvas.SetLeft(SelectedArea, startPosition.X);
-            Canvas.SetTop(SelectedArea, startPosition.Y);
+            Canvas.SetLeft(this.SelectedArea, this.startPosition.X);
+            Canvas.SetTop(this.SelectedArea, this.startPosition.Y);
 
-            SelectedArea.Width = 0;
-            SelectedArea.Height = 0;
-            SelectedArea.Visibility = Visibility.Visible;
+            this.SelectedArea.Width = 0;
+            this.SelectedArea.Height = 0;
+            this.SelectedArea.Visibility = Visibility.Visible;
         }
 
         private void OnDragFinish(object sender, MouseButtonEventArgs e)
         {
-            isMouseDown = false;
-            SelectedArea.Visibility = Visibility.Collapsed;
-            LayoutRoot.ReleaseMouseCapture();
-            globalHook.UninstallHook();
+            this.isMouseDown = false;
+            this.SelectedArea.Visibility = Visibility.Collapsed;
+            this.LayoutRoot.ReleaseMouseCapture();
+            this.globalHook.UninstallHook();
 
-            Point finishPosition = e.GetPosition(LayoutRoot);
+            var finishPosition = e.GetPosition(this.LayoutRoot);
             int left, top, width, height;
 
-            if (startPosition.X < finishPosition.X)
+            if (this.startPosition.X < finishPosition.X)
             {
-                left = (int)startPosition.X;
-                width = (int)(finishPosition.X - startPosition.X);
+                left = (int)this.startPosition.X;
+                width = (int)(finishPosition.X - this.startPosition.X);
             }
             else
             {
                 left = (int)finishPosition.X;
-                width = (int)(startPosition.X - finishPosition.X);
+                width = (int)(this.startPosition.X - finishPosition.X);
             }
 
-            if (startPosition.Y < finishPosition.Y)
+            if (this.startPosition.Y < finishPosition.Y)
             {
-                top = (int)startPosition.Y;
-                height = (int)(finishPosition.Y - startPosition.Y);
+                top = (int)this.startPosition.Y;
+                height = (int)(finishPosition.Y - this.startPosition.Y);
             }
             else
             {
                 top = (int)finishPosition.Y;
-                height = (int)(startPosition.Y - finishPosition.Y);
+                height = (int)(this.startPosition.Y - finishPosition.Y);
             }
 
             if (width < 1 || height < 1) return;
             Disable();
 
             var rect = new Drawing.Rectangle(left, top, width, height);
-            var trimmed = screenshot.Clone(rect, screenshot.PixelFormat);
+            var trimmed = this.screenshot.Clone(rect, this.screenshot.PixelFormat);
             var path = location + @"\~$Capture-"
                            + DateTime.Now.ToString("yyyyMMddHHmmssfff")
                            + ".temp.png";
 
             trimmed.Save(path, Drawing.Imaging.ImageFormat.Png);
             trimmed.Dispose();
-            screenshot.Dispose();
+            this.screenshot.Dispose();
 
             new TweetWindow(path).ShowDialog();
 
-            globalHook.InstallHook();
-            isTrimMode = false;
+            this.globalHook.InstallHook();
+            this.isTrimMode = false;
         }
 
         private void OnDraging(object sender, MouseEventArgs e)
         {
-            if (!isMouseDown) return;
-            Point nowPosition = e.GetPosition(LayoutRoot);
+            if (!this.isMouseDown) return;
+            var nowPosition = e.GetPosition(this.LayoutRoot);
 
-            if (startPosition.X < nowPosition.X)
+            if (this.startPosition.X < nowPosition.X)
             {
-                Canvas.SetLeft(SelectedArea, startPosition.X);
-                SelectedArea.Width = nowPosition.X - startPosition.X;
+                Canvas.SetLeft(this.SelectedArea, this.startPosition.X);
+                this.SelectedArea.Width = nowPosition.X - this.startPosition.X;
             }
             else
             {
-                Canvas.SetLeft(SelectedArea, nowPosition.X);
-                SelectedArea.Width = startPosition.X - nowPosition.X;
+                Canvas.SetLeft(this.SelectedArea, nowPosition.X);
+                this.SelectedArea.Width = this.startPosition.X - nowPosition.X;
             }
 
-            if (startPosition.Y < nowPosition.Y)
+            if (this.startPosition.Y < nowPosition.Y)
             {
-                Canvas.SetTop(SelectedArea, startPosition.Y);
-                SelectedArea.Height = nowPosition.Y - startPosition.Y;
+                Canvas.SetTop(this.SelectedArea, this.startPosition.Y);
+                this.SelectedArea.Height = nowPosition.Y - this.startPosition.Y;
             }
             else
             {
-                Canvas.SetTop(SelectedArea, nowPosition.Y);
-                SelectedArea.Height = startPosition.Y - nowPosition.Y;
+                Canvas.SetTop(this.SelectedArea, nowPosition.Y);
+                this.SelectedArea.Height = this.startPosition.Y - nowPosition.Y;
             }
         }
 
@@ -278,16 +278,16 @@ namespace Screenshotter
 
         private void Enable()
         {
-            Opacity = 1f;
-            IsHitTestVisible = true;
-            TrimNotify.Visibility = Visibility.Visible;
+            this.Opacity = 1f;
+            this.IsHitTestVisible = true;
+            this.TrimNotify.Visibility = Visibility.Visible;
         }
 
         private void Disable()
         {
-            Opacity = 0f;
-            IsHitTestVisible = false;
-            TrimNotify.Visibility = Visibility.Collapsed;
+            this.Opacity = 0f;
+            this.IsHitTestVisible = false;
+            this.TrimNotify.Visibility = Visibility.Collapsed;
         }
 
 

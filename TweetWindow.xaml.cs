@@ -23,24 +23,24 @@ namespace Screenshotter
             this.path = path;
 
             InitializeComponent();
-            Keyboard.Focus(Message);
+            Keyboard.Focus(this.Message);
         }
 
         private async void TweetAsync(object sender, RoutedEventArgs e)
         {
             ShowStatus("ツイートしています...");
 
-            if (!File.Exists(path))
+            if (!File.Exists(this.path))
             {
                 MessageBox.Show("スクリーンショットが失われたため、ツイートできません。");
                 Close();
             }
 
             await MainWindow.token.Statuses.UpdateWithMediaAsync(
-                      Message.Text, new FileStream(path, FileMode.Open)
+                      this.Message.Text, new FileStream(this.path, FileMode.Open)
             );
 
-            File.Delete(path);
+            File.Delete(this.path);
 
             CloseStatus(async () =>
             {
@@ -54,21 +54,21 @@ namespace Screenshotter
         private void CountText(object sender, TextChangedEventArgs e)
         {
             var temp = Regex.Replace(
-                Message.Text,
+                this.Message.Text,
                 @"s?https?://[-_.!~*'()a-zA-Z0-9;/?:@&=+$,%#]+",
                 "01234567890123"
             ).Replace(Environment.NewLine, "1");
 
-            Count.Content = 140 - temp.Length - 24;
-            if ((int)Count.Content < 0)
+            this.Count.Content = 140 - temp.Length - 24;
+            if ((int)this.Count.Content < 0)
             {
-                Count.Foreground = Brushes.Red;
-                TweetButton.IsEnabled = false;
+                this.Count.Foreground = Brushes.Red;
+                this.TweetButton.IsEnabled = false;
             }
             else
             {
-                Count.Foreground = Brushes.Black;
-                TweetButton.IsEnabled = true;
+                this.Count.Foreground = Brushes.Black;
+                this.TweetButton.IsEnabled = true;
             }
         }
 
@@ -77,7 +77,7 @@ namespace Screenshotter
             if (e.Key == Key.Escape) Close();
             if (e.Key != Key.Enter) return;
             if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.None) return;
-            if ((int)Count.Content < 0) return;
+            if ((int)this.Count.Content < 0) return;
 
             e.Handled = true;
             TweetAsync(null, null);
@@ -85,25 +85,25 @@ namespace Screenshotter
 
         private void ShowStatus(string message, bool isLoader = true)
         {
-            Status.Content = message;
-            Loader.Visibility = (isLoader) ? Visibility.Visible
+            this.Status.Content = message;
+            this.Loader.Visibility = (isLoader) ? Visibility.Visible
                                            : Visibility.Collapsed;
-            Success.Visibility = (isLoader) ? Visibility.Collapsed
+            this.Success.Visibility = (isLoader) ? Visibility.Collapsed
                                             : Visibility.Visible;
 
-            Storyboard sb = FindResource("DialogShowAnimation") as Storyboard;
-            Storyboard.SetTarget(sb, StatusGrid);
-            sb.Completed += (s, a) => StatusGrid.IsHitTestVisible = true;
+            var sb = FindResource("DialogShowAnimation") as Storyboard;
+            Storyboard.SetTarget(sb, this.StatusGrid);
+            sb.Completed += (s, a) => this.StatusGrid.IsHitTestVisible = true;
             sb.Begin();
         }
 
         private void CloseStatus(Action doAfterClose = null)
         {
-            Storyboard sb = FindResource("DialogCloseAnimation") as Storyboard;
-            Storyboard.SetTarget(sb, StatusGrid);
+            var sb = FindResource("DialogCloseAnimation") as Storyboard;
+            Storyboard.SetTarget(sb, this.StatusGrid);
             sb.Completed += (s, a) =>
             {
-                StatusGrid.IsHitTestVisible = false;
+                this.StatusGrid.IsHitTestVisible = false;
                 doAfterClose?.Invoke();
             };
             sb.Begin();
