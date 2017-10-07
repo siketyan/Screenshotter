@@ -11,7 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using Drawing = System.Drawing;
 
-namespace Screenshotter
+namespace Screenshotter.Windows
 {
     /// <summary>
     /// TweetWindow.xaml の相互作用ロジック

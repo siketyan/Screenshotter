@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Screenshotter
+namespace Screenshotter.Objects
 {
     public class Credentials
     {

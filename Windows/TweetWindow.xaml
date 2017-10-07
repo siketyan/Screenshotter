@@ -1,11 +1,11 @@
-﻿<Window x:Class="Screenshotter.TweetWindow"
+﻿<Window x:Class="Screenshotter.Windows.TweetWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" Topmost="True" WindowStartupLocation="CenterScreen"
         BorderBrush="#39F" BorderThickness="1" FontFamily="Meiryo UI" ShowInTaskbar="False"
-        Title="スクリーンショットのツイート" Height="210" Width="498" Icon="Resources/icon.ico"
+        Title="スクリーンショットのツイート" Height="210" Width="498" Icon="../Resources/icon.ico"
         SizeToContent="Height" SnapsToDevicePixels="True" UseLayoutRounding="True"
         Closing="OnClosing">
     <WindowChrome.WindowChrome>
@@ -43,10 +43,10 @@
                     Padding="20,0" CornerRadius="3">
                 <StackPanel Orientation="Horizontal">
                     <Label x:Name="Loader" VerticalContentAlignment="Center"
-                           FontFamily="Resources/#Material Icons"
+                           FontFamily="../Resources/#Material Icons"
                            FontSize="36" Foreground="#555" Visibility="Visible"></Label>
                     <Label x:Name="Success" VerticalContentAlignment="Center"
-                           FontFamily="Resources/#Material Icons"
+                           FontFamily="../Resources/#Material Icons"
                            FontSize="40" Foreground="#009688" Visibility="Collapsed"></Label>
                     <Label x:Name="Status" VerticalContentAlignment="Center"
                            FontSize="14" Foreground="#333" Margin="0,-2,0,0">ツイートしています..</Label>

@@ -8,8 +8,9 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
+using Screenshotter.Objects;
 
-namespace Screenshotter
+namespace Screenshotter.Windows
 {
     /// <summary>
     /// AuthorizeWindow.xaml の相互作用ロジック
@@ -38,7 +39,7 @@ namespace Screenshotter
             ShowStatus("認証しています...");
 
             var token = await _session.GetTokensAsync(Pin.Text);
-            var credentials = new Credentials()
+            var credentials = new Credentials
             {
                 AccessToken = token.AccessToken,
                 AccessSecret = token.AccessTokenSecret

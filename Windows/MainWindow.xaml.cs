@@ -12,10 +12,11 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
+using Screenshotter.Objects;
 using Drawing = System.Drawing;
 using Forms = System.Windows.Forms;
 
-namespace Screenshotter
+namespace Screenshotter.Windows
 {
     /// <summary>
     /// MainWindow.xaml の相互作用ロジック
@@ -86,7 +87,7 @@ namespace Screenshotter
 
             if (iconStream != null)
             {
-                _notifyIcon = new Forms.NotifyIcon()
+                _notifyIcon = new Forms.NotifyIcon
                 {
                     Text = @"Screenshotter",
                     Icon = new Drawing.Icon(iconStream.Stream),

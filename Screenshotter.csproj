@@ -70,19 +70,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="AuthorizeWindow.xaml.cs">
+    <Compile Include="Windows\AuthorizeWindow.xaml.cs">
       <DependentUpon>AuthorizeWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Credentials.cs" />
-    <Compile Include="TweetWindow.xaml.cs">
+    <Compile Include="Objects\Credentials.cs" />
+    <Compile Include="Windows\TweetWindow.xaml.cs">
       <DependentUpon>TweetWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="__Private.cs" />
-    <Page Include="AuthorizeWindow.xaml">
+    <Page Include="Windows\AuthorizeWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MainWindow.xaml">
+    <Page Include="Windows\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -90,12 +90,12 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="Windows\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ScreenshotUtil.cs" />
-    <Page Include="TweetWindow.xaml">
+    <Compile Include="Utilities\ScreenshotUtil.cs" />
+    <Page Include="Windows\TweetWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
