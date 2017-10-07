@@ -2,17 +2,21 @@
 using Kennedy.ManagedHooks;
 using Newtonsoft.Json;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using Screenshotter.Objects;
+using Screenshotter.Utilities;
 using Drawing = System.Drawing;
 using Forms = System.Windows.Forms;
 
@@ -228,46 +232,84 @@ namespace Screenshotter.Windows
             }
         }
 
-        private static void OnExceptionThrow(object sender, FirstChanceExceptionEventArgs e)
+        private void OnExceptionThrow(object sender, FirstChanceExceptionEventArgs e)
         {
             if (e.Exception.Source == "PresentationCore" ||
                 e.Exception.Source == "System.Xaml") return;
 
-            var msg = "予期しない例外が発生したため、Screenshotterを終了します。\n"
-                    + "以下のレポートを開発者に報告してください。\n"
-                    + "※OKボタンをクリックするとクリップボードにレポートをコピーして終了します。\n"
-                    + "※キャンセルボタンをクリックするとそのまま終了します。\n\n"
-                    + e.Exception.GetType() + "\n"
-                    + e.Exception.Message + "\n"
-                    + e.Exception.StackTrace + "\n"
-                    + e.Exception.Source;
-
-            if (e.Exception.InnerException != null)
+            Disable();
+            _globalHook.UninstallHook();
+            
+            var detail = e.Exception.ToDetailString();
+            var dialog = new TaskDialog
             {
-                msg += "\nInner: "
-                     + e.Exception.InnerException.GetType() + "\n"
-                     + e.Exception.InnerException.Message + "\n"
-                     + e.Exception.InnerException.StackTrace + "\n"
-                     + e.Exception.InnerException.Source;
-            }
+                Caption = "Screenshotter",
+                InstructionText = "予期しない例外が発生しました",
+                Text = "申し訳ありません。開発者が予期していない例外が発生しました。",
+                Icon = TaskDialogStandardIcon.Error,
+                DetailsCollapsedLabel = "詳細情報",
+                DetailsExpandedLabel = "詳細情報を非表示",
+                DetailsExpandedText = detail,
+                ExpansionMode = TaskDialogExpandedDetailsLocation.ExpandFooter,
+                DetailsExpanded = false
+            };
 
-            var result = MessageBox.Show(
-                            msg, "Error - Screenshotter",
-                            MessageBoxButton.OKCancel, MessageBoxImage.Error
-                         );
-            if (result == MessageBoxResult.OK)
+            var cmdCopyAndExit = new TaskDialogCommandLink
+            {
+                Text = "詳細情報をコピーして終了します（推奨）",
+                Instruction = "例外の詳細情報をクリップボードにコピーしてから終了します。\n"
+                            + "開発者（Twitter: @siketyan）へ詳細情報をお知らせいただけると、\n"
+                            + "問題解決の手がかりになるかもしれません。"
+            };
+
+            var cmdMailAndExit = new TaskDialogCommandLink
+            {
+                Text = "メールクライアントを起動して終了します（推奨）",
+                Instruction = "メールクライアントを起動してから終了します。\n"
+                            + "そのまま送信すると、この問題を報告できます。"
+            };
+
+            var cmdExit = new TaskDialogCommandLink
+            {
+                Text = "Screenshotterを終了します"
+            };
+
+            cmdCopyAndExit.Click += (s, a) =>
             {
                 var thread = new Thread(() =>
                 {
-                    Clipboard.SetDataObject(msg, true);
+                    Clipboard.SetDataObject(detail, true);
                 });
 
                 thread.SetApartmentState(ApartmentState.STA);
                 thread.Start();
                 thread.Join();
-            }
 
-            Environment.Exit(0);
+                dialog.Close();
+                Environment.Exit(0);
+            };
+
+            cmdMailAndExit.Click += (s, a) =>
+            {
+                Process.Start(
+                    "mailto:siketyan@sikeserver.com?subject=Screenshotter%20Exception%20Report&body="
+                        + HttpUtility.UrlEncode(detail)?.Replace("+", "%20")
+                );
+
+                dialog.Close();
+                Environment.Exit(0);
+            };
+
+            cmdExit.Click += (s, a) =>
+            {
+                dialog.Close();
+                Environment.Exit(0);
+            };
+
+            dialog.Controls.Add(cmdCopyAndExit);
+            dialog.Controls.Add(cmdMailAndExit);
+            dialog.Controls.Add(cmdExit);
+            dialog.Show();
         }
 
         private void Enable()
