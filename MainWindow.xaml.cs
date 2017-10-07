@@ -124,7 +124,6 @@ namespace Screenshotter
                 new TweetWindow(this.screenshot).ShowDialog();
 
                 this.globalHook.InstallHook();
-                this.isTrimMode = true;
                 return;
             }
 
