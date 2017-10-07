@@ -14,9 +14,9 @@ namespace Screenshotter
     /// <summary>
     /// AuthorizeWindow.xaml の相互作用ロジック
     /// </summary>
-    public partial class AuthorizeWindow : Window
+    public partial class AuthorizeWindow
     {
-        private OAuth.OAuthSession session;
+        private OAuth.OAuthSession _session;
 
         public AuthorizeWindow()
         {
@@ -25,19 +25,19 @@ namespace Screenshotter
 
         private async void InitAsync(object sender, RoutedEventArgs e)
         {
-            session = await OAuth.AuthorizeAsync(
+            _session = await OAuth.AuthorizeAsync(
                 __Private.ConsumerKey,
                 __Private.ConsumerSecret
             );
 
-            AuthorizeUrl.Text = session.AuthorizeUri.ToString();
+            AuthorizeUrl.Text = _session.AuthorizeUri.ToString();
         }
 
         private async void AuthorizeAsync(object sender, RoutedEventArgs e)
         {
             ShowStatus("認証しています...");
 
-            var token = await session.GetTokensAsync(Pin.Text);
+            var token = await _session.GetTokensAsync(Pin.Text);
             var credentials = new Credentials()
             {
                 AccessToken = token.AccessToken,
@@ -47,7 +47,7 @@ namespace Screenshotter
             await Task.Run(() =>
             {
                 var json = JsonConvert.SerializeObject(credentials);
-                var writer = File.CreateText(MainWindow.location + @"\credentials.json");
+                var writer = File.CreateText(MainWindow.Location + @"\credentials.json");
 
                 writer.Write(json);
                 writer.Close();
@@ -74,10 +74,8 @@ namespace Screenshotter
 
         private void CheckPin(object sender, TextCompositionEventArgs e)
         {
-            bool yesParse;
-
             var tmp = Pin.Text + e.Text;
-            yesParse = float.TryParse(tmp, out float xx);
+            var yesParse = float.TryParse(tmp, out var _);
 
             e.Handled = !yesParse;
         }
@@ -85,12 +83,12 @@ namespace Screenshotter
         private void ShowStatus(string message, bool isLoader = true)
         {
             Status.Content = message;
-            Loader.Visibility = (isLoader) ? Visibility.Visible
-                                           : Visibility.Collapsed;
-            Success.Visibility = (isLoader) ? Visibility.Collapsed
-                                            : Visibility.Visible;
+            Loader.Visibility = isLoader ? Visibility.Visible
+                                         : Visibility.Collapsed;
+            Success.Visibility = isLoader ? Visibility.Collapsed
+                                          : Visibility.Visible;
 
-            Storyboard sb = FindResource("DialogShowAnimation") as Storyboard;
+            var sb = FindResource("DialogShowAnimation") as Storyboard;
             Storyboard.SetTarget(sb, StatusGrid);
             sb.Completed += (s, a) => StatusGrid.IsHitTestVisible = true;
             sb.Begin();
@@ -98,7 +96,7 @@ namespace Screenshotter
 
         private void CloseStatus(Action doAfterClose = null)
         {
-            Storyboard sb = FindResource("DialogCloseAnimation") as Storyboard;
+            var sb = FindResource("DialogCloseAnimation") as Storyboard;
             Storyboard.SetTarget(sb, StatusGrid);
             sb.Completed += (s, a) =>
             {
